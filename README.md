@@ -1,6 +1,6 @@
 # Academic Profile Form Filler
 
-On 2024-07-01, the Harvard Medical School's Office for Faculty Affairs mandated the use of a new form that forced an unreasonable amount of duplicative data entry upon its affiliate organizations.  For every new hire, they would now have to enter things like full name into multiple times into different systems.
+On 2024-07-01, the Harvard Medical School's Office for Faculty Affairs mandated the use of a new form that forced an unreasonable amount of duplicative data entry upon its affiliate organizations.  For every new hire, they would now have to enter things like full name multiple times into different systems.
 
 To fix this issue, an executable script will be devised that will take in data from our initial point of entry (REDCap, exported as a csv) and enter it into the form.  To do so, we will use Adobe's PDF Form data import feature, which allows a user to import an XML file to fill its fields.
 
