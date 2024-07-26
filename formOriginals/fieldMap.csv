@@ -1,0 +1,112 @@
+"(Not in XML)
+Page","(Represented in XML as 3-character strings with 0's padding the left)
+ID",Label,Properties
+1,1,search_required?,Yes || No
+1,2,search_portal_id,text
+1,3,search_exception?,Yes || No
+1,4,search_exception_description,text
+1,5,name_last,text
+1,6,name_first,text
+1,7,name_middle,text
+1,8,dob,text (mm/dd/yyyy)
+1,9,huid,text
+1,10,degree_1,text
+1,11,degree_2,text
+1,12,degree_3,text
+1,13,appointing_institution,text (MGH)
+1,14,location_primary,text (if not MGH)
+1,15,title_role,text (at MGH)
+2,16,proposed_rank,text (HMS Title)
+2,17,proposed_department,text (Medicine)
+2,18,proposed_institution,text (MGH)
+2,19,time_commitment,"Full-time (works at least 4 days per week at HMS, HSDM or a primary affiliate of HMS) || Part-time (works at least 1, but less than 4, days per week at HMS, HSDM or a primary affiliate of HMS)"
+2,20,proposed_start,text (HMS start date)
+2,21,proposed_end,text (HMS end date)
+2,22,proposed_supervisor,text
+2,23,loc_1_type,"text (Affiliate, satellite site, offsite location)"
+2,24,loc_2_type,"text (Affiliate, satellite site, offsite location)"
+2,25,loc_3_type,"text (Affiliate, satellite site, offsite location)"
+2,26,loc_4_type,"text (Affiliate, satellite site, offsite location)"
+2,27,loc_1_org(city_state),"text (MGH (Boston, MA))"
+2,28,loc_2_org(city_state),"text (MGH (Boston, MA))"
+2,29,loc_3_org(city_state),"text (MGH (Boston, MA))"
+2,30,loc_4_org(city_state),"text (MGH (Boston, MA))"
+2,31,loc_1_days,text (#.#)
+2,32,loc_2_days,text (#.#)
+2,33,loc_3_days,text (#.#)
+2,34,loc_4_days,text (#.#)
+2,35,loc_1_title,text (Physician || Research Fellow || etc.)
+2,36,loc_2_title,text (Physician || Research Fellow || etc.)
+2,37,loc_3_title,text (Physician || Research Fellow || etc.)
+2,38,loc_4_title,text (Physician || Research Fellow || etc.)
+2,39,appointment_rationale,"text (Library access required, etc.)"
+3,40,academic_appts_outside_hms?,Yes || No
+3,41,voting_appts_outside_hms?,Yes || No
+3,42,degree_verified?,Yes || No
+3,43,clinically_credentialed?,Yes || No || N/A
+3,44,provided_policies?,Yes || No
+3,45,visa_required?,Yes || No
+3,46,visa_1_type,text
+3,47,visa_1_sponsor,text (MGH)
+3,48,visa_1_start,text (date)
+3,49,visa_1_end,text (date)
+3,50,visa_1_number,text
+3,51,visa_2_type,text
+3,52,visa_3_sponsor,text (MGH)
+3,53,visa_4_start,text (date)
+3,54,visa_5_end,text (date)
+3,55,visa_6_number,text
+3,56,faculty_is_trainee?,Yes || No
+3,57,trainee_role_ended?,Yes || No || N/A
+3,58,anticipated_teaching,text
+4,59,edu_1_date,text (mm/yyyy)
+4,60,edu_1_degree,text (abbreviation (honors))
+4,61,edu_1_field,text (higher education major)
+4,62,edu_1_institution,text (school name)
+4,63,edu_2_date,text (mm/yyyy)
+4,64,edu_2_degree,text (abbreviation (honors))
+4,65,edu_2_field,text (higher education major)
+4,66,edu_2_institution,text (school name)
+4,67,edu_3_date,text (mm/yyyy)
+4,68,edu_3_degree,text (abbreviation (honors))
+4,69,edu_3_field,text (higher education major)
+4,70,edu_3_institution,text (school name)
+4,71,postdoc_1_date,text (mm/yyyy)
+4,72,postdoc_1_title,text
+4,73,postdoc_1_specialty,text
+4,74,postdoc_1_institution,text
+4,75,postdoc_2_date,text (mm/yyyy)
+4,76,postdoc_2_title,text
+4,77,postdoc_2_specialty,text
+4,78,postdoc_2_institution,text
+4,79,postdoc_3_date,text (mm/yyyy)
+4,80,postdoc_3_title,text
+4,81,postdoc_3_specialty,text
+4,82,postdoc_3_institution,text
+4,83,postdoc_4_date,text (mm/yyyy)
+4,84,postdoc_4_title,text
+4,85,postdoc_4_specialty,text
+4,86,postdoc_4_institution,text
+4,87,faculty_1_years,text (yyyy-present)
+4,88,faculty_1_title,text
+4,89,faculty_1_department,text
+4,90,faculty_1_institution,text
+4,91,faculty_2_years,text (yyyy-present)
+4,92,faculty_2_title,text
+4,93,faculty_2_department,text
+4,94,faculty_2_institution,text
+4,95,faculty_3_years,text (yyyy-present)
+4,96,faculty_3_title,text
+4,97,faculty_3_department,text
+4,98,faculty_3_institution,text
+4,99,hospital_1_years,text (yyyy-present)
+4,100,hospital_1_title,text
+4,101,hospital_1_department,text (Department (Division))
+4,102,hospital_1_institution,text
+4,103,hospital_2_years,text (yyyy-present)
+4,104,hospital_2_title,text
+4,105,hospital_2_department,text (Department (Division))
+4,106,hospital_2_title,text
+5,107,project_description,text
+5,108,preparer_printed_name,text
+5,109,preparer_printed_date,text (m/d/yyyy)
