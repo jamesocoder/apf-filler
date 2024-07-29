@@ -11,3 +11,17 @@ There is an opportunity for further automation, more script can be written to ut
 To obtain an XML file that lists all of the fields on the form, first fill every field with dummy data.  Then, using Adobe Acrobat, Menu->Form Options->Export Data...
 
 Make sure to choose XML as the file type.
+
+## Setup
+
+This was written with Python 3.12.4
+
+Make sure to install pip with your Python installation, then use `pip install pyinstaller`.  This package assists with turning the script into an .exe file.
+
+## How to build
+
+The .exe file can be built with `python -m PyInstaller --onefile ./src/main.py`
+
+## How to run
+
+The program can either be run without Python installed after it is built into an .exe or directly from the python file with Python installed.  To run it directly from the script, use `python ./src/main.py`.
