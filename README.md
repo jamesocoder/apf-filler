@@ -24,4 +24,8 @@ The .exe file can be built with `python -m PyInstaller --onefile ./src/main.py`
 
 ## How to run
 
-The program can either be run without Python installed after it is built into an .exe or directly from the python file with Python installed.  To run it directly from the script, use `python ./src/main.py`.
+To run after compiling into an executable:
+- With a terminal, run the executable and supply it with the relative path to one of the [data samples](/dataSamples/) as a command line argument
+
+To run directly with Python installed:
+- In a terminal with the project root opened, `python ./src/main.py ./dataSamples/_____.csv`
