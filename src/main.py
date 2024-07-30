@@ -22,11 +22,12 @@ def main():
 
                 /watch?v=B62ACxuq8Pw
                 '''
-                discombobulate(headers, row)
+                discombobulate(headers, row, argv[2])
                 ''' inSummary(
                     discombobulate(
                         headers,
-                        row
+                        row,
+                        argv[2]
                     )
                 ) '''
         except csvErr as e:
