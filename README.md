@@ -25,7 +25,7 @@ The .exe file can be built with `python -m PyInstaller --onefile ./src/main.py`
 ## How to run
 
 To run after compiling into an executable:
-- With a terminal, run the executable and supply it with the relative path to [label.csv](/dataSamples/label.csv) and your name as command line arguments
+- With a terminal, run the executable and supply it with the relative path to [label.csv](/dataSamples/label.csv) and your name as command-line arguments
 
 To run directly with Python installed:
 - In a terminal with the project root opened, `python ./src/main.py ./dataSamples/label.csv [your_name]`

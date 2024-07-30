@@ -1,7 +1,7 @@
 from csv import reader, Error as csvErr
 from sys import argv, exit
 from parser import parse as discombobulate
-#from exporter import toXml as inSummary
+from exporter import toXml as inSummary
 
 # TODO: Look into https://docs.python.org/3/howto/argparse.html instead of sys.argv
 '''
@@ -22,14 +22,13 @@ def main():
 
                 /watch?v=B62ACxuq8Pw
                 '''
-                discombobulate(headers, row, argv[2])
-                ''' inSummary(
+                inSummary(
                     discombobulate(
                         headers,
                         row,
                         argv[2]
                     )
-                ) '''
+                )
         except csvErr as e:
             exit('file {}, line {}: {}'.format(argv[1], reader.line_num, e))
         

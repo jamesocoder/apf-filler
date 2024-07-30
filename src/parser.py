@@ -17,14 +17,15 @@ value to fill each field in with will be at index (n-1).
 '''
 def parse(H: list, R: list, preparer: str) -> list:
     '''
-    How many fields are in the APF form
+    How many fields are in the APF form + 1
+
+    The last element of the list will house the Record ID to name the XML file with.
 
     All fields' values will be stored in a list named 'lt' in the parse() function.
     Each field's value can be found at index (n-1), where n = its ordinal position
     in the APF's field list (see ../formOriginals/apfFields.csv)
     '''
-    NUM_FIELDS = 109
-
+    NUM_FIELDS = 109 + 1
     lt = [None] * NUM_FIELDS
 
     lt[15] = hmsTitle(H, R)
@@ -32,10 +33,12 @@ def parse(H: list, R: list, preparer: str) -> list:
     pSearch(H, R, lt)
 
     lt[4:8] = [
+        getVal(H, R, 'Candidate Last Name '),
         getVal(H, R, 'Candidate First Name'),
         getVal(H, R, 'Candidate Middle Name'),
-        getVal(H, R, 'Candidate Last Name '),
-        getVal(H, R, 'Date of birth')
+        date.fromisoformat(
+            getVal(H, R, 'Date of birth')
+        ).strftime('%m/%d/%Y')
     ]
 
     lt[9:11] = [
@@ -72,11 +75,11 @@ def parse(H: list, R: list, preparer: str) -> list:
 
     # TODO: Add degree major fields
     lt[58:66] = [
-        getVal(H, R, 'Date Completed (1)'),
+        degreeDate(H, R, 'Date Completed (1)'),
         getVal(H, R, 'Degree (1)'),
         '',
         getVal(H, R, 'Name of Institution where Medical or Doctoral degree was earned'),
-        getVal(H, R, 'Date Completed (2)'),
+        degreeDate(H, R, 'Date Completed (2)'),
         getVal(H, R, 'Degree (2)'),
         '',
         getVal(H, R, 'Name of Institution (2)')
@@ -85,7 +88,7 @@ def parse(H: list, R: list, preparer: str) -> list:
     lt[98:102] = [
         str(date.fromisoformat(lt[19]).year) + '-present',
         lt[14],
-        'Medicine ({})'.format(getVal(H, R, 'Division, Research Center or Research Unit')),
+        'Medicine ({})'.format(getDivision(H, R)),
         INSTITUTION
     ]
 
@@ -96,7 +99,8 @@ def parse(H: list, R: list, preparer: str) -> list:
         date.today().isoformat()
     ]
 
-    print(lt)
+    lt[-1] = getVal(H, R, 'Record ID')
+
     return lt
 
 '''
@@ -116,7 +120,8 @@ The HMS title value lies in 1 of many fields in REDCap.  Because of the design o
 survey, we are guaranteed to only have a value in 1 of the fields, the rest of the fields
 will be empty.
 
-CAUTION: All fields could be empty (no title was selected).
+CAUTION: All fields could be empty (no title was selected).  It is up to the user to
+address this possiblity before running the script.
 '''
 def hmsTitle(H: list, R: list) -> str:
     LABELS  = [
@@ -214,7 +219,7 @@ def calculateEndDate(lt: list) -> str:
         # End date is 6/30 of next year
         return date(startDate.year + 1, 6, 30).isoformat()
     
-def clinicalCredentials(H: list, R: list):
+def clinicalCredentials(H: list, R: list) -> str:
     return 'Yes' if (getVal(H, R, 'Appointment Type') == 'Clinical') else 'N/A'
 
 def handleVisa(H: list, R: list, lt: list):
@@ -245,3 +250,14 @@ def handleFacultySection(H: list, R: list, lt: list):
     #        'N/A',
     #        getVal(H, R, 'Anticipated Teaching Activities')
     #    ]
+
+# The form's degree date fields must be in mm/yyyy format
+def degreeDate(H: list, R: list, colNm: str) -> str:
+    return date.fromisoformat(
+        getVal(H, R, colNm)
+    ).strftime('%m/%Y')
+
+# Ampersands must be escaped in XML files
+def getDivision(H: list, R: list) -> str:
+    out = getVal(H, R, 'Division, Research Center or Research Unit')
+    return out.replace('&', "&amp;")
