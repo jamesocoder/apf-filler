@@ -1,6 +1,6 @@
 ::Script Version 1.0
 ::TODO: pdftk manipulation is blocked by some protection on the APF form.
-::Forms suggest using qpdf to remove this protection.
+::Online forums suggest using qpdf to remove this protection.
 
 ::Parameters:
 ::%1 = REDCap output, labelled version
