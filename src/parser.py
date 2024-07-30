@@ -1,6 +1,8 @@
 from sys import exit
 from datetime import date
 
+INSTITUTION = 'MGH'
+
 '''
 Reads and handles the values of the given record and outputs their validated values
 as a list whose elements correspond to the fields in the APF form.
@@ -22,7 +24,6 @@ def parse(H: list, R: list, preparer: str) -> list:
     in the APF's field list (see ../formOriginals/apfFields.csv)
     '''
     NUM_FIELDS = 109
-    INSTITUTION = 'MGH'
 
     lt = [None] * NUM_FIELDS
 
@@ -43,11 +44,13 @@ def parse(H: list, R: list, preparer: str) -> list:
     ]
 
     lt[12] = INSTITUTION
-    # TODO: lt[14] = mghTitle(H, R)
+    lt[14] = mghTitle(H, R)
     lt[16:18] = ['Medicine', INSTITUTION]
-    # TODO: lt[18] = timeCommitment(H, R)
+    lt[18] = timeCommitment(H, R)
+
     lt[19] = getVal(H, R, 'Requested Start Date')
-    # TODO: lt[20] = endDate()
+    lt[20] = calculateEndDate(lt)
+
     lt[21] = getVal(H, R, 'HMS Faculty Mentor (full name)')
 
     lt[22] = 'Affiliate'
@@ -60,12 +63,12 @@ def parse(H: list, R: list, preparer: str) -> list:
     
     lt[39] = 'No'
     lt[41] = 'Yes'
-    # TODO: lt[42] = clinicalCreds(H, R)
+    lt[42] = clinicalCredentials(H, R)
     lt[43] = 'Yes'
 
-    # TODO: handleVisa(H, R, lt)
+    handleVisa(H, R, lt)
 
-    # TODO: if (faculty): handleFacultySection(H, R, lt)
+    handleFacultySection(H, R, lt)
 
     # TODO: Add degree major fields
     lt[58:66] = [
@@ -90,7 +93,7 @@ def parse(H: list, R: list, preparer: str) -> list:
 
     lt[107:109] = [
         preparer,
-        date.today().strftime('%m/%d/%Y')
+        date.today().isoformat()
     ]
 
     print(lt)
@@ -113,7 +116,7 @@ The HMS title value lies in 1 of many fields in REDCap.  Because of the design o
 survey, we are guaranteed to only have a value in 1 of the fields, the rest of the fields
 will be empty.
 
-Caution: All fields could be empty (no title was selected).
+CAUTION: All fields could be empty (no title was selected).
 '''
 def hmsTitle(H: list, R: list) -> str:
     LABELS  = [
@@ -168,7 +171,7 @@ def pSearch(H: list, R: list, lt: list):
         lt[2] = 'Yes'
         if (lt[15] in TRAINEES):
             lt[3] = 'Trainee appointment'
-        ''' TODO: Add search exception exclusive selection REDCap field
+        ''' TODO: Add search exception radio selection REDCap field
         else:
             lt[3] = getVal(H, R, 'Search Exception Reason')
         '''
@@ -176,3 +179,69 @@ def pSearch(H: list, R: list, lt: list):
         lt[0] = 'Yes'
         lt[2] = 'No'
         # TODO: lt[1] = getVal(H, R, 'Search Portal ID')
+
+def mghTitle(H: list, R: list) -> str:
+    if (getVal(H, R, 'Appointment Type') == 'Clinical'):
+        return getVal(H, R, 'MGH Clinical Title')
+    else:
+        return getVal(H, R, 'MGH Non-Clinical Title ')
+
+def timeCommitment(H: list, R: list) -> str:
+    response = getVal(H, R,
+        'How many days per week on average will the candidate be at MGH?'
+    )
+    if (response == 'Greater than or equal to 4 days'):
+        return 'Full-time (works at least 4 days per week at HMS, ' + \
+            'HSDM or a primary affiliate of HMS)'
+    else:
+        return 'Part-time (works at least 1, but less than 4, days ' + \
+            'per week at HMS, HSDM or a primary affiliate of HMS)'
+
+def calculateEndDate(lt: list) -> str:
+    HOLDING = [
+        'Assistant Professor',
+        'Assistant Professor, Part-time',
+        'Associate Professor',
+        'Associate Professor, Part-time',
+        'Professor',
+        'Professor, Part-time'
+    ]
+    startDate = date.fromisoformat(lt[19])
+    if (lt[15] in HOLDING):
+        # End date is startDate + 1 year
+        return date(startDate.year + 1, startDate.month, startDate.day).isoformat()
+    else:
+        # End date is 6/30 of next year
+        return date(startDate.year + 1, 6, 30).isoformat()
+    
+def clinicalCredentials(H: list, R: list):
+    return 'Yes' if (getVal(H, R, 'Appointment Type') == 'Clinical') else 'N/A'
+
+def handleVisa(H: list, R: list, lt: list):
+    if (getVal(H, R, 'Citizenship/Visa Status') == 'Visa Required'):
+        lt[44] = 'Yes'
+        vType = getVal(H, R, 'Visa Type')
+        vOther = getVal(H, R, 'Please specify other Visa type  ')
+        if (vType != ''):
+            lt[45] = vType if (vOther == '') else vOther
+        lt[46] = INSTITUTION
+        # TODO: lt[47:50] = [
+        #    getVal(H, R, 'Visa Start Date'),
+        #    getVal(H, R, 'Visa End Date'),
+        #    getVal(H, R, 'Visa ID Number')
+        #]
+    else:
+        lt[44] = 'No'
+
+def handleFacultySection(H: list, R: list, lt: list):
+    TRAINEES = [
+        'Research Fellow',
+        'Clinical Fellow'
+    ]
+
+    # TODO: if (lt[15] not in TRAINEES):
+    #    lt[55:58] = [
+    #        'No',
+    #        'N/A',
+    #        getVal(H, R, 'Anticipated Teaching Activities')
+    #    ]
