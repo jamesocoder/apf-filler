@@ -33,6 +33,7 @@ To run directly with Python installed:
 There is an opportunity for another CLI script to be written to utilize [pdftk](https://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/), a purchasable command-line tool that automates importing data and then outputting a new, filled PDF.
 
 The original PDF may need to be unencrypted with [qpdf](https://github.com/qpdf/qpdf) first using this command:
+
 `qpdf.exe --decrypt [encrypted.pdf] [outputName.pdf]`
 
 - See [gitlab](https://gitlab.com/pdftk-java/pdftk/-/issues/87) for more context.
