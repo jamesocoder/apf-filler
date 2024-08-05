@@ -2,6 +2,10 @@ from sys import exit
 from datetime import date
 
 INSTITUTION = 'MGH'
+TRAINEE_TITLES = [
+    'Research Fellow',
+    'Clinical Fellow'
+]
 
 '''
 Reads and handles the values of the given record and outputs their validated values
@@ -73,17 +77,19 @@ def parse(H: list, R: list, preparer: str) -> list:
 
     handleFacultySection(H, R, lt)
 
-    # TODO: Add degree major fields
-    lt[58:66] = [
+    lt[58:62] = [
         degreeDate(H, R, 'Date Completed (1)'),
         getVal(H, R, 'Degree (1)'),
-        '',
+        getVal(H, R, 'Major/Field of Study (1)'),
         getVal(H, R, 'Name of Institution where Medical or Doctoral degree was earned'),
-        degreeDate(H, R, 'Date Completed (2)'),
-        getVal(H, R, 'Degree (2)'),
-        '',
-        getVal(H, R, 'Name of Institution (2)')
     ]
+    if (getVal(H, R, 'Degree (2)')):
+        lt[62:66] = [
+            degreeDate(H, R, 'Date Completed (2)'),
+            getVal(H, R, 'Degree (2)'),
+            getVal(H, R, 'Major/Field of Study (2)'),
+            getVal(H, R, 'Name of Institution (2)')
+        ]
 
     lt[98:102] = [
         str(date.fromisoformat(lt[19]).year) + '-present',
@@ -92,7 +98,7 @@ def parse(H: list, R: list, preparer: str) -> list:
         INSTITUTION
     ]
 
-    # TODO: lt[106] = getVal(H, R, 'Work/Project Description')
+    lt[106] = getVal(H, R, 'Project Description')
 
     lt[107:109] = [
         preparer,
@@ -158,32 +164,25 @@ def hmsTitle(H: list, R: list) -> str:
 
     # Trim off holding appointment language
     if (match in HOLDING):
-        match = match[0:-44]
+        match = match[0:-45]
 
     return match
 
 # Sets value for fields regarding the Search Report
 def pSearch(H: list, R: list, lt: list):
-    TRAINEES = [
-        'Research Fellow',
-        'Clinical Fellow'
-    ]
-
     search = getVal(H, R, 'Search Report')
 
     if (search == 'Not Required' or search == ''):
         lt[0] = 'No'
         lt[2] = 'Yes'
-        if (lt[15] in TRAINEES):
+        if (lt[15] in TRAINEE_TITLES):
             lt[3] = 'Trainee appointment'
-        ''' TODO: Add search exception radio selection REDCap field
         else:
             lt[3] = getVal(H, R, 'Search Exception Reason')
-        '''
     else:
         lt[0] = 'Yes'
         lt[2] = 'No'
-        # TODO: lt[1] = getVal(H, R, 'Search Portal ID')
+        lt[1] = getVal(H, R, 'Search Portal ID')
 
 def mghTitle(H: list, R: list) -> str:
     if (getVal(H, R, 'Appointment Type') == 'Clinical'):
@@ -230,26 +229,24 @@ def handleVisa(H: list, R: list, lt: list):
         if (vType != ''):
             lt[45] = vType if (vOther == '') else vOther
         lt[46] = INSTITUTION
-        # TODO: lt[47:50] = [
-        #    getVal(H, R, 'Visa Start Date'),
-        #    getVal(H, R, 'Visa End Date'),
-        #    getVal(H, R, 'Visa ID Number')
-        #]
+        lt[47:50] = [
+           getVal(H, R, 'Visa Start Date'),
+           getVal(H, R, 'Visa End Date'),
+           getVal(H, R, 'Visa ID Number')
+        ]
     else:
         lt[44] = 'No'
 
 def handleFacultySection(H: list, R: list, lt: list):
-    TRAINEES = [
-        'Research Fellow',
-        'Clinical Fellow'
-    ]
-
-    # TODO: if (lt[15] not in TRAINEES):
-    #    lt[55:58] = [
-    #        'No',
-    #        'N/A',
-    #        getVal(H, R, 'Anticipated Teaching Activities')
-    #    ]
+    if (lt[15] not in TRAINEE_TITLES):
+       lt[55:58] = [
+           'No',
+           'N/A',
+           'Requirement will be met with activity in the following areas: ' + 
+           'teaching of students, residents, fellows, and postdocs; clinical ' +
+           'and/or lab supervision, peer teaching, local presentations, ' +
+           'mentoring, and/or educational administration.'
+       ]
 
 # The form's degree date fields must be in mm/yyyy format
 def degreeDate(H: list, R: list, colNm: str) -> str:

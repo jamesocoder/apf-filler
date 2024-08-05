@@ -1,7 +1,7 @@
 from csv import reader, Error as csvErr
 from sys import argv, exit
-from parser import parse as discombobulate
 from exporter import toXml as inSummary
+from parser import parse as discombobulate
 
 # TODO: Look into https://docs.python.org/3/howto/argparse.html instead of sys.argv
 '''
