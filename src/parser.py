@@ -18,6 +18,11 @@ R = The record we're currently parsing
 Returns:
 A list of length n, where n is the number of fields in the APF form.  The appropriate
 value to fill each field in with will be at index (n-1).
+
+Notes:
+To avoid having to create lookup tables for the values corresponding to each REDCap
+field's choice IDs, this script will require that the "labels" version of the data
+be exported from REDCap instead of the "raw" version.
 '''
 def parse(H: list, R: list, preparer: str) -> list:
     '''
@@ -25,7 +30,7 @@ def parse(H: list, R: list, preparer: str) -> list:
 
     The last element of the list will house the Record ID to name the XML file with.
 
-    All fields' values will be stored in a list named 'lt' in the parse() function.
+    All field values will be stored in a list named 'lt' in the parse() function.
     Each field's value can be found at index (n-1), where n = its ordinal position
     in the APF's field list (see ../formOriginals/apfFields.csv)
     '''
@@ -112,6 +117,9 @@ def parse(H: list, R: list, preparer: str) -> list:
 '''
 Checks if the given column exists, then returns its value.  If the value was null,
 returns an empty string ('').
+
+Raises:
+If the column name can't be found in the data, raises an error.
 '''
 def getVal(H: list, R: list, colNm: str) -> str:
     try:

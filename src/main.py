@@ -4,11 +4,6 @@ from exporter import toXml as inSummary
 from parser import parse as discombobulate
 
 # TODO: Look into https://docs.python.org/3/howto/argparse.html instead of sys.argv
-'''
-To avoid having to create lookup tables for the values corresponding to each REDCap's
-field's choices' IDs, this script will require that the "labels" version of the data
-be exported instead of the "raw" version.
-'''
 def main():
     with open(argv[1]) as f:
         csv = reader(f)
