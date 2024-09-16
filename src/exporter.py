@@ -12,7 +12,7 @@ def toXml(vals: list):
         f.write('<?xml version="1.0" encoding="UTF-8"?>\n\n')
         f.write('<fields xmlns:xfdf="http://ns.adobe.com/xfdf-transition/">\n')
         for i, v in enumerate(vals):
-            if (v):
+            if (v and i != (len(vals) - 1)):
                 f.write('    <field xfdf:original="{:03d}">{}</field>\n'.format(
                     i + 1,
                     v
