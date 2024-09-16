@@ -18,56 +18,18 @@ TRAINEE_TITLES = [
     'Clinical Fellow'
 ]
 
-def clinFellowGradDate(H: list, R: list) -> str:
-    val = getVal(H, R, 'Medical School Graduation Date')
-    if (len(val)):
-        return date.fromisoformat(val).strftime('%m/%Y')
-    else:
-        val = getVal(H, R, 'Medical School Attendance Dates')
-        if (len(val)):
-            try:
-                # Extract graduation date from '____ - ____'
-                val = val[val.index(' - ') + 3:]
-                return checkGradDate(val)
-            except ValueError as e:
-                raise e
+def getVal(H: list, R: list, colNm: str) -> str:
+    '''
+    Checks if the given column exists, then returns its value.  If the value was null,
+    returns an empty string ('').
 
-def checkGradDate(val: str) -> str:
-    slashCnt = len(val) - len(val.replace('/', ''))
-    match slashCnt:
-        case 0:
-            # val looks like 'text'
-            # Assume new hire entered a year
-            return '6/' + val
-        case 1:
-            # val likely looks like 'text1/text2'
-            # Check if text1 is a month or a year
-            leftNum = int(val[:val.index('/')])
-            if (leftNum < 13):
-                # Assume val is 'month/year'
-                return val
-            else:
-                # Assume val is 'year/month'
-                return '{}/{}'.format(
-                    val[val.index('/') + 1:],
-                    leftNum
-                )
-        case 2:
-            # val likely looks like 'text1/text2/text3'
-            # Check if text1 is a month or day
-            slash01Index = val.index('/')
-            text1 = int(val[:slash01Index])
-            if (text1 < 13):
-                # Assume date is in month/day/year format
-                return '{}{}'.format(
-                    text1,
-                    val[val.index('/', slash01Index + 1):]
-                )
-            else:
-                # Assume date is in day/month/year format
-                return val[slash01Index + 1:]
-
-
+    Raises:
+    If the column name can't be found in the data, raises an error.
+    '''
+    try:
+        return R[H.index(colNm)]
+    except ValueError as e:
+        exit('ERROR: The row \'{}\' does not exist in the REDCap export.'.format(colNm))
 
 def parseClinFellow(type: int, preparer: str, H: list, R: list) -> list:
     lt = [None] * NUM_FIELDS
@@ -140,24 +102,81 @@ def parseClinFellow(type: int, preparer: str, H: list, R: list) -> list:
 
     return lt
 
-'''
-Reads and handles the values of the given record and outputs their validated values
-as a list whose elements correspond to the fields in the APF form.
+def clinFellowGradDate(H: list, R: list) -> str:
+    '''
+    Chooses the appropriate algorithm for processing grad date depending
+    upon which field has a value.
+    '''
+    val = getVal(H, R, 'Medical School Graduation Date')
+    if (len(val)):
+        return date.fromisoformat(val).strftime('%m/%Y')
+    else:
+        val = getVal(H, R, 'Medical School Attendance Dates')
+        if (len(val)):
+            try:
+                # Extract graduation date from '____ - ____'
+                val = val[val.index(' - ') + 3:]
+                return checkGradDate(val)
+            except ValueError as e:
+                raise e
 
-Params:
-H = Headers from the csv file exported out of REDCap
-R = The record we're currently parsing
+def checkGradDate(val: str) -> str:
+    '''
+    Algorithm for processing the string found in the attendance date field
+    of the clinical trainee intake form
+    '''
+    slashCnt = len(val) - len(val.replace('/', ''))
+    match slashCnt:
+        case 0:
+            # val looks like 'text'
+            # Assume new hire entered a year
+            return '6/' + val
+        case 1:
+            # val likely looks like 'text1/text2'
+            # Check if text1 is a month or a year
+            leftNum = int(val[:val.index('/')])
+            if (leftNum < 13):
+                # Assume val is 'month/year'
+                return val
+            else:
+                # Assume val is 'year/month'
+                return '{}/{}'.format(
+                    val[val.index('/') + 1:],
+                    leftNum
+                )
+        case 2:
+            # val likely looks like 'text1/text2/text3'
+            # Check if text1 is a month or day
+            slash01Index = val.index('/')
+            text1 = int(val[:slash01Index])
+            if (text1 < 13):
+                # Assume date is in month/day/year format
+                return '{}{}'.format(
+                    text1,
+                    val[val.index('/', slash01Index + 1):]
+                )
+            else:
+                # Assume date is in day/month/year format
+                return val[slash01Index + 1:]
 
-Returns:
-A list of length n, where n is the number of fields in the APF form.  The appropriate
-value to fill each field in with will be at index (n-1).
-
-Notes:
-To avoid having to create lookup tables for the values corresponding to each REDCap
-field's choice IDs, this script will require that the "labels" version of the data
-be exported from REDCap instead of the "raw" version.
-'''
 def parse(preparer: str, H: list, R: list) -> list:
+    '''
+    Reads and handles the values of the given record and outputs their validated values
+    as a list whose elements correspond to the fields in the APF form.
+
+    Params:
+    H = Headers from the csv file exported out of REDCap
+    R = The record we're currently parsing
+
+    Returns:
+    A list of length n, where n is the number of fields in the APF form.  The appropriate
+    value to fill each field in with will be at index (n-1).
+
+    Notes:
+    To avoid having to create lookup tables for the values corresponding to each REDCap
+    field's choice IDs, this script will require that the "labels" version of the data
+    be exported from REDCap instead of the "raw" version.
+    '''
     lt = [None] * NUM_FIELDS
 
     lt[15] = hmsTitle(H, R)
@@ -237,30 +256,17 @@ def parse(preparer: str, H: list, R: list) -> list:
 
     return lt
 
-'''
-Checks if the given column exists, then returns its value.  If the value was null,
-returns an empty string ('').
-
-Raises:
-If the column name can't be found in the data, raises an error.
-'''
-def getVal(H: list, R: list, colNm: str) -> str:
-    try:
-        return R[H.index(colNm)]
-    except ValueError as e:
-        exit('ERROR: The row \'{}\' does not exist in the REDCap export.'.format(colNm))
-
-'''
-Returns the HMS title from the given REDCap record.
-
-The HMS title value lies in 1 of many fields in REDCap.  Because of the design of the
-survey, we are guaranteed to only have a value in 1 of the fields, the rest of the fields
-will be empty.
-
-CAUTION: All fields could be empty (no title was selected).  It is up to the user to
-address this possiblity before running the script.
-'''
 def hmsTitle(H: list, R: list) -> str:
+    '''
+    Returns the HMS title from the given REDCap record.
+
+    The HMS title value lies in 1 of many fields in REDCap.  Because of the design of the
+    survey, we are guaranteed to only have a value in 1 of the fields, the rest of the fields
+    will be empty.
+
+    CAUTION: All fields could be empty (no title was selected).  It is up to the user to
+    address this possiblity before running the script.
+    '''
     LABELS  = [
         'Select Harvard title:',
         'Full-time: Greater than 4 days at MGH',
