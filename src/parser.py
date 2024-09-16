@@ -1,40 +1,182 @@
 from sys import exit
 from datetime import date
 
+'''
+How many fields are in the APF form + 1
+
+The last element of the list will house the Record ID to name the XML file with.
+
+All field values will be stored in a list named 'lt' in the parse() function.
+Each field's value can be found at index (n-1), where n = its ordinal position
+in the APF's field list (see ../formOriginals/apfFields.csv)
+'''
+NUM_FIELDS = 109 + 1
+
 INSTITUTION = 'MGH'
 TRAINEE_TITLES = [
     'Research Fellow',
     'Clinical Fellow'
 ]
 
-'''
-Reads and handles the values of the given record and outputs their validated values
-as a list whose elements correspond to the fields in the APF form.
-
-Params:
-H = Headers from the csv file exported out of REDCap
-R = The record we're currently parsing
-
-Returns:
-A list of length n, where n is the number of fields in the APF form.  The appropriate
-value to fill each field in with will be at index (n-1).
-
-Notes:
-To avoid having to create lookup tables for the values corresponding to each REDCap
-field's choice IDs, this script will require that the "labels" version of the data
-be exported from REDCap instead of the "raw" version.
-'''
-def parse(H: list, R: list, preparer: str) -> list:
+def getVal(H: list, R: list, colNm: str) -> str:
     '''
-    How many fields are in the APF form + 1
+    Checks if the given column exists, then returns its value.  If the value was null,
+    returns an empty string ('').
 
-    The last element of the list will house the Record ID to name the XML file with.
-
-    All field values will be stored in a list named 'lt' in the parse() function.
-    Each field's value can be found at index (n-1), where n = its ordinal position
-    in the APF's field list (see ../formOriginals/apfFields.csv)
+    Raises:
+    If the column name can't be found in the data, raises an error.
     '''
-    NUM_FIELDS = 109 + 1
+    try:
+        return R[H.index(colNm)]
+    except ValueError as e:
+        exit('ERROR: The row \'{}\' does not exist in the REDCap export.'.format(colNm))
+
+def parseClinFellow(type: int, preparer: str, H: list, R: list) -> list:
+    lt = [None] * NUM_FIELDS
+
+    if (type == 1):
+        lt[14] = 'Clinical Fellow'
+        lt[9] = getVal(H, R, 'Medical Degree Abbreviation')
+        lt[19] = date(date.today().year, 7, 1).isoformat()
+    elif(type == 2):
+        lt[14] = 'Resident'
+        lt[9] = getVal(H, R, 'Degree Abbreviation')
+
+    lt[0] = "No"
+    lt[2] = "Yes"
+    lt[3] = "Trainee appointment"
+    lt[4:8] = [
+        getVal(H, R, 'Last Name'),
+        getVal(H, R, 'First Name'),
+        getVal(H, R, 'Middle Name'),
+        date.fromisoformat(
+            getVal(H, R, 'Date of Birth')
+        ).strftime('%m/%d/%Y')
+    ]
+    lt[12] = INSTITUTION
+    lt[15] = 'Clinical Fellow'
+    lt[20] = date(date.today().year + 1, 6, 30).isoformat()
+    lt[22] = 'Affiliate'
+    lt[26] = INSTITUTION + ' (Boston, MA)'
+    lt[30] = '5.0'
+    lt[34] = lt[14]
+    lt[38] = 'Appointment required for library access and participation in ' + \
+        'certain programs and/or grant applications.'
+    lt[39] = 'No'
+    lt[41:45] = [
+        'Yes', 'Yes', 'Yes',
+        getVal(H, R, 'Will you need a VISA?')
+    ]
+    if (lt[44] == 'Yes'):
+        lt[45:50] = [
+            getVal(H, R, 'Current Visa Type'),
+            INSTITUTION,
+            getVal(H, R, 'Current Visa Start Date'),
+            getVal(H, R, 'Current Visa End Date'),
+            getVal(H, R, 'Current Visa ID Number')
+        ]
+    try:
+        lt[58] = clinFellowGradDate(H, R)
+    except ValueError as e:
+        exit(
+            '{} {} '.format(lt[5], lt[4]) + 'is either missing a graduation ' + \
+            'date or has a malformatted one.  Check that the medical school ' + \
+            'attendance dates are in \"m/d/yyyy - m/d/yyyy\" format.'
+        )
+    lt[59:62] = [
+        lt[9],
+        'Medicine',
+        getVal(H, R, 'Medical School Name')
+    ]
+    lt[98:102] = [
+        str(date.today().year) + '-present',
+        lt[14],
+        'Medicine',
+        INSTITUTION
+    ]
+    lt[107:109] = [
+        preparer,
+        date.today().isoformat()
+    ]
+    lt[-1] = getVal(H, R, 'Record ID')
+
+    return lt
+
+def clinFellowGradDate(H: list, R: list) -> str:
+    '''
+    Chooses the appropriate algorithm for processing grad date depending
+    upon which field has a value.
+    '''
+    val = getVal(H, R, 'Medical School Graduation Date')
+    if (len(val)):
+        return date.fromisoformat(val).strftime('%m/%Y')
+    else:
+        val = getVal(H, R, 'Medical School Attendance Dates')
+        if (len(val)):
+            try:
+                # Extract graduation date from '____ - ____'
+                val = val[val.index(' - ') + 3:]
+                return checkGradDate(val)
+            except ValueError as e:
+                raise e
+
+def checkGradDate(val: str) -> str:
+    '''
+    Algorithm for processing the string found in the attendance date field
+    of the clinical trainee intake form
+    '''
+    slashCnt = len(val) - len(val.replace('/', ''))
+    match slashCnt:
+        case 0:
+            # val looks like 'text'
+            # Assume new hire entered a year
+            return '6/' + val
+        case 1:
+            # val likely looks like 'text1/text2'
+            # Check if text1 is a month or a year
+            leftNum = int(val[:val.index('/')])
+            if (leftNum < 13):
+                # Assume val is 'month/year'
+                return val
+            else:
+                # Assume val is 'year/month'
+                return '{}/{}'.format(
+                    val[val.index('/') + 1:],
+                    leftNum
+                )
+        case 2:
+            # val likely looks like 'text1/text2/text3'
+            # Check if text1 is a month or day
+            slash01Index = val.index('/')
+            text1 = int(val[:slash01Index])
+            if (text1 < 13):
+                # Assume date is in month/day/year format
+                return '{}{}'.format(
+                    text1,
+                    val[val.index('/', slash01Index + 1):]
+                )
+            else:
+                # Assume date is in day/month/year format
+                return val[slash01Index + 1:]
+
+def parse(preparer: str, H: list, R: list) -> list:
+    '''
+    Reads and handles the values of the given record and outputs their validated values
+    as a list whose elements correspond to the fields in the APF form.
+
+    Params:
+    H = Headers from the csv file exported out of REDCap
+    R = The record we're currently parsing
+
+    Returns:
+    A list of length n, where n is the number of fields in the APF form.  The appropriate
+    value to fill each field in with will be at index (n-1).
+
+    Notes:
+    To avoid having to create lookup tables for the values corresponding to each REDCap
+    field's choice IDs, this script will require that the "labels" version of the data
+    be exported from REDCap instead of the "raw" version.
+    '''
     lt = [None] * NUM_FIELDS
 
     lt[15] = hmsTitle(H, R)
@@ -114,30 +256,17 @@ def parse(H: list, R: list, preparer: str) -> list:
 
     return lt
 
-'''
-Checks if the given column exists, then returns its value.  If the value was null,
-returns an empty string ('').
-
-Raises:
-If the column name can't be found in the data, raises an error.
-'''
-def getVal(H: list, R: list, colNm: str) -> str:
-    try:
-        return R[H.index(colNm)]
-    except ValueError as e:
-        exit('ERROR: The row \'{}\' does not exist in the REDCap export.'.format(colNm))
-
-'''
-Returns the HMS title from the given REDCap record.
-
-The HMS title value lies in 1 of many fields in REDCap.  Because of the design of the
-survey, we are guaranteed to only have a value in 1 of the fields, the rest of the fields
-will be empty.
-
-CAUTION: All fields could be empty (no title was selected).  It is up to the user to
-address this possiblity before running the script.
-'''
 def hmsTitle(H: list, R: list) -> str:
+    '''
+    Returns the HMS title from the given REDCap record.
+
+    The HMS title value lies in 1 of many fields in REDCap.  Because of the design of the
+    survey, we are guaranteed to only have a value in 1 of the fields, the rest of the fields
+    will be empty.
+
+    CAUTION: All fields could be empty (no title was selected).  It is up to the user to
+    address this possiblity before running the script.
+    '''
     LABELS  = [
         'Select Harvard title:',
         'Full-time: Greater than 4 days at MGH',
