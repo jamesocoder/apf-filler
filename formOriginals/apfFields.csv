@@ -59,7 +59,7 @@ ID",Label,Properties,REDCap Intake Field,Data transformation,Clinical Fellow Int
 3,56,faculty_is_trainee?,Yes || No,"const = ""No""",,,
 3,57,trainee_role_ended?,Yes || No || N/A,"const = ""N/A""",,,
 3,58,anticipated_teaching,text,const = GenericStatement,,,
-4,59,edu_1_date,text (mm/yyyy),date_completed_education1,,calculated,"Medical School Attendance Dates || If resident, then ""Medical School Graduation Date"", else ""Medical End Date"""
+4,59,edu_1_date,text (mm/yyyy),date_completed_education1,,calculated,"Medical School Attendance Dates || ""Medical School Graduation Date"""
 4,60,edu_1_degree,text (abbreviation (honors)),degree1,,calculated,"If resident, then ""Degree Abbreviation"", else ""Medical Degree Abbreviation"""
 4,61,edu_1_field,text (higher education major),degree1_major,,"const = ""Medicine""",
 4,62,edu_1_institution,text (school name),name_of_institution_1,,Medical School Name,
