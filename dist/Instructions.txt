@@ -1,0 +1,57 @@
+Version 2.0
+
+1. For the regular REDCap Intake Form only: Make a copy of the APF REDCap report
+    - Rename it to include your name
+    - Change its visibility so that only you can see it
+    - Filter the report for only your divisions
+
+2. Extract this zipped folder to your Desktop
+
+3. Download the *label* version of the REDCap "APF" report
+    - It is okay if it contains multiple unimported records
+
+4. Open a Command Prompt terminal:
+    - From the start menu, search for "cmd"
+    - Select Command Prompt.  This is typically the best match listed at the top.
+
+5. In the terminal, type the following, then press enter/return:
+   a. cd Desktop/apf-filler
+        - This changes your working directory to the folder you extracted.
+
+   b. REDCap Intake Form: apf-filler.exe "nameOfYourRedcapReport.csv" "Your Full Name"
+      Fellowship Onboarding Form: apf-filler.exe "nameOfYourRedcapReport.csv" "Your Full Name" *3rd_Argument
+        * The 3rd Argument will either be "fellow" or "resident" depending on what clinical trainee type you are processing
+        - This creates XML files for each record in your report in the working directory
+        - XML stands for eXtensible Markup Language
+
+   c. "exit"
+        - This closes the terminal.
+
+6. Open your chosen blank or template Academic Profile Form in Adobe Acrobat
+    - For Clinical Trainee Intake Form data:
+        - You must have a template copy of the APF with some answers filled in with your training program's specific default answers
+        - The fields you must give default answers for are:
+          Page 2:
+            Anticipated Start Date (if processing residents)
+            Supervisor
+          Page 5:
+            Project Description
+    - Caution: Some of the default answers you have on your template may be overwritten by apf-filler's generic answers.
+    - Always choose to save the filled form as a different name (Save As)
+
+7. Navigate through the following menu options:
+    - Menu
+    - Form Options
+    - Import Data...
+
+8. Select one of the XML files apf-filler generated
+
+9. Sign the form, then "Save As" a different name
+
+11. Navigate through the following menu options:
+    - Menu
+    - Form Options
+    - Clear Form
+    - This ensures a blank canvas for the next import
+
+12. Repeat the process from Step 7 for each unimported record.
