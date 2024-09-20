@@ -34,8 +34,13 @@ def holmes(clinFellowType = 0):
         0 for rolling intake form
         1 for clinical fellow
         2 for resident
+    
+    Notes:
+      - 2024-09-20 - REDCap has randomly begun outputting CSVs using UTF-8-BOM encoding instead of
+        the expected UTF-8 enconding.  An encoding argument must be given to open() to handle this.
+        https://stackoverflow.com/a/34399309
     '''
-    with open(argv[1]) as f:
+    with open(argv[1], encoding='utf-8-sig') as f:
         csv = reader(f)
         try:
             headers = next(csv)

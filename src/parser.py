@@ -29,7 +29,7 @@ def getVal(H: list, R: list, colNm: str) -> str:
     try:
         return R[H.index(colNm)]
     except ValueError as e:
-        exit('ERROR: The row \'{}\' does not exist in the REDCap export.'.format(colNm))
+        exit('ERROR: The column \'{}\' does not exist in the REDCap export.'.format(colNm))
 
 def parseClinFellow(type: int, preparer: str, H: list, R: list) -> list:
     lt = [None] * NUM_FIELDS
