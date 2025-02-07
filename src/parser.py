@@ -200,7 +200,8 @@ def parse(preparer: str, H: list, R: list) -> list:
     lt[12] = INSTITUTION
     lt[14] = mghTitle(H, R)
     lt[16:18] = ['Medicine', INSTITUTION]
-    lt[18] = timeCommitment(H, R)
+    lt[18] = 'Full-time (works at least 4 days per week at HMS, ' + \
+        'HSDM or a primary affiliate of HMS)' if lt[15] in TRAINEE_TITLES else timeCommitment(H, R)
 
     lt[19] = getVal(H, R, 'Requested Start Date')
     lt[20] = calculateEndDate(lt)
@@ -209,7 +210,7 @@ def parse(preparer: str, H: list, R: list) -> list:
 
     lt[22] = 'Affiliate'
     lt[26] = INSTITUTION + ' (Boston, MA)'
-    lt[30] = getVal(H, R, 'Expected Days at location')
+    lt[30] = '5.0' if lt[15] in TRAINEE_TITLES else getVal(H, R, 'Expected Days at location')
     lt[34] = lt[14]
 
     lt[38] = 'Appointment required for library access and participation in ' + \
@@ -301,7 +302,7 @@ def hmsTitle(H: list, R: list) -> str:
 
     # Trim off holding appointment language
     if (match in HOLDING):
-        match = match[0:-45]
+        match = 'Member of the Faculty'
 
     return match
 
