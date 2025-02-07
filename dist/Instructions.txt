@@ -40,18 +40,20 @@ Version 2.0
     - Always choose to save the filled form as a different name (Save As)
 
 7. Navigate through the following menu options:
-    - Menu
-    - Form Options
-    - Import Data...
+    - All tools
+    - Prepare a form
+    - Drop-down menu accessed through the top-left elipses (...) to the right of "Prepare a form"
+    - Import data
 
-8. Select one of the XML files apf-filler generated
+8. Select one of the XML files apf-filler generated in the APF program's folder
 
-9. Sign the form, then "Save As" a different name
+9. "Save As" the filled form with a different name -- do not overwrite your template PDF.
 
-11. Navigate through the following menu options:
-    - Menu
-    - Form Options
-    - Clear Form
-    - This ensures a blank canvas for the next import
+11. If you *are not* using a template with pre-filled answers, navigate through the following menu options:
+    - Drop-down menu accessed through the top-right elipses (...) to the right of "Fields"
+    - Clear form
+    - This creates a blank canvas for the next import
+    
+    If you *are* using a template with pre-filled answers, you should reopen the template to get back to your starting canvas.
 
 12. Repeat the process from Step 7 for each unimported record.
