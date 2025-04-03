@@ -15,6 +15,10 @@ def toXml(vals: list):
             if (v and i != (len(vals) - 1)):
                 f.write('    <field xfdf:original="{:03d}">{}</field>\n'.format(
                     i + 1,
-                    v
+                    escapeAmpersands(v)
                 ))
         f.write('</fields>')
+
+# Ampersands must be escaped in XML files
+def escapeAmpersands(val: str) -> str:
+    return val.replace('&', "&amp;")

@@ -242,7 +242,7 @@ def parse(preparer: str, H: list, R: list) -> list:
     lt[98:102] = [
         str(date.fromisoformat(lt[19]).year) + '-present',
         lt[14],
-        'Medicine ({})'.format(getDivision(H, R)),
+        'Medicine ({})'.format(getVal(H, R, 'Division, Research Center or Research Unit')),
         INSTITUTION
     ]
 
@@ -391,8 +391,3 @@ def degreeDate(H: list, R: list, colNm: str) -> str:
     return date.fromisoformat(
         getVal(H, R, colNm)
     ).strftime('%m/%Y')
-
-# Ampersands must be escaped in XML files
-def getDivision(H: list, R: list) -> str:
-    out = getVal(H, R, 'Division, Research Center or Research Unit')
-    return out.replace('&', "&amp;")
