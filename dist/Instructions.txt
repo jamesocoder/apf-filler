@@ -37,7 +37,6 @@ Version 2.0
           Page 5:
             Project Description
     - Caution: Some of the default answers you have on your template may be overwritten by apf-filler's generic answers.
-    - Always choose to save the filled form as a different name (Save As)
 
 7. Navigate through the following menu options:
     - All tools
@@ -48,6 +47,7 @@ Version 2.0
 8. Select one of the XML files apf-filler generated in the APF program's folder
 
 9. "Save As" the filled form with a different name -- do not overwrite your template PDF.
+    - Always choose to save the filled form as a different name (Save As)
 
 11. If you *are not* using a template with pre-filled answers, navigate through the following menu options:
     - Drop-down menu accessed through the top-right elipses (...) to the right of "Fields"
