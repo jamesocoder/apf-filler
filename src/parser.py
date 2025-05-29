@@ -271,7 +271,7 @@ def hmsTitle(H: list, R: list) -> str:
     LABELS  = [
         'Select Harvard title:',
         'Full-time: Greater than 4 days at MGH',
-        'Part-time 1-4 Days at MGH',
+        'Part-time: 1-4 Days at MGH',
         'Less than 1 day at MGH'
     ]
     OTHER = [
